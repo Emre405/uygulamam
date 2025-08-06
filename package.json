@@ -2,6 +2,7 @@
   "name": "hesap-takip",
   "version": "1.0.0",
   "private": true,
+  "homepage": ".",
   "dependencies": {
     "firebase": "^9.22.2",
     "react": "^18.2.0",
