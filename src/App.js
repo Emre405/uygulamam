@@ -401,7 +401,7 @@ function App() {
         if (loginEmail === correctEmail && loginPassword === correctPassword) {
             // Firebase Authentication ile giriş yap
             try {
-                await signInWithEmailAndPassword(firebaseAuth, loginEmail, loginPassword);
+                await signInWithEmailAndPassword(auth, loginEmail, loginPassword);
                 setIsLoggedIn(true);
                 setLoginError('');
                 console.log('Firebase giriş başarılı:', loginEmail);
