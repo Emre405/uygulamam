@@ -142,15 +142,8 @@ function App() {
                 console.log('User ID:', user.uid);
                 setUserId(user.uid);
             } else {
-                try {
-                    console.log('Anonim kimlik doğrulama başlatılıyor...');
-                    // Anonim kimlik doğrulama kullan
-                    await signInAnonymously(firebaseAuth);
-                    console.log('Anonim kimlik doğrulama başarılı');
-                } catch (error) {
-                    console.error("Kimlik doğrulama hatası:", error);
-                    showToast("Kimlik doğrulama başarısız oldu.", "error");
-                }
+                // Gmail ile giriş yapılmamışsa login sayfasına yönlendir
+                console.log('Kullanıcı giriş yapmamış');
             }
             setLoading(false);
         });
@@ -181,21 +174,22 @@ function App() {
     // Firestore'dan veri çekme (tüm koleksiyonlar)
     useEffect(() => {
         if (db && userId) {
-            // Alımlar koleksiyonunu dinle
-            // orderBy kullanmak yerine istemci tarafında sıralama yapıyoruz.
+            // Alımlar koleksiyonunu dinle - Real-time
             const purchasesQuery = query(collection(db, `artifacts/${appId}/users/${userId}/purchases`));
             const unsubscribePurchases = onSnapshot(purchasesQuery, (snapshot) => {
                 const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                console.log('Real-time alımlar güncellendi:', data.length, 'kayıt');
                 setPurchases(data);
             }, (error) => {
                 console.error("Alımlar verisi çekilirken hata oluştu:", error);
                 showToast("Alım verileri yüklenirken hata oluştu.", "error");
             });
 
-            // Satışlar koleksiyonunu dinle
+            // Satışlar koleksiyonunu dinle - Real-time
             const salesQuery = query(collection(db, `artifacts/${appId}/users/${userId}/sales`));
             const unsubscribeSales = onSnapshot(salesQuery, (snapshot) => {
                 const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                console.log('Real-time satışlar güncellendi:', data.length, 'kayıt');
                 setSales(data);
             }, (error) => {
                 console.error("Satışlar verisi çekilirken hata oluştu:", error);
