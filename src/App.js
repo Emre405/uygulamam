@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { initializeApp } from 'firebase/app';
-import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from 'firebase/auth';
+import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged, signInWithEmailAndPassword } from 'firebase/auth';
 import { getFirestore, collection, addDoc, onSnapshot, query, doc, updateDoc, deleteDoc, getDocs, where, setDoc } from 'firebase/firestore';
 import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, XAxis, YAxis, Tooltip, Legend, Bar, CartesianGrid } from 'recharts';
 
@@ -391,7 +391,7 @@ function App() {
     const [loginPassword, setLoginPassword] = useState('');
     const [loginError, setLoginError] = useState('');
 
-    const handleLogin = (e) => {
+    const handleLogin = async (e) => {
         e.preventDefault();
         
         // Gmail ve şifre kontrolü
@@ -399,9 +399,17 @@ function App() {
         const correctPassword = 'Saf.8080';
         
         if (loginEmail === correctEmail && loginPassword === correctPassword) {
-            setIsLoggedIn(true);
-            setLoginError('');
-            console.log('Giriş başarılı:', loginEmail);
+            // Firebase Authentication ile giriş yap
+            try {
+                await signInWithEmailAndPassword(firebaseAuth, loginEmail, loginPassword);
+                setIsLoggedIn(true);
+                setLoginError('');
+                console.log('Firebase giriş başarılı:', loginEmail);
+            } catch (error) {
+                console.error('Firebase giriş hatası:', error);
+                setLoginError('Giriş yapılırken hata oluştu.');
+                setLoginPassword('');
+            }
         } else {
             setLoginError('Gmail adresi veya şifre yanlış!');
             setLoginPassword('');
